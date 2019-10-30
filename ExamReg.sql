@@ -16,67 +16,44 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: ExamPeriod; Type: TABLE; Schema: public; Owner: postgres
+-- Name: Category; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."ExamPeriod" (
+CREATE TABLE public."Category" (
     "Id" uuid NOT NULL,
-    "ExamDate" date NOT NULL,
-    "StartHour" smallint NOT NULL,
-    "FinishHour" smallint NOT NULL,
-    "TermId" uuid NOT NULL,
-    "ExamProgramId" uuid NOT NULL,
-    "CX" bigint NOT NULL
-);
-
-
-ALTER TABLE public."ExamPeriod" OWNER TO postgres;
-
---
--- Name: ExamPeriod_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public."ExamPeriod_CX_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public."ExamPeriod_CX_seq" OWNER TO postgres;
-
---
--- Name: ExamPeriod_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public."ExamPeriod_CX_seq" OWNED BY public."ExamPeriod"."CX";
-
-
---
--- Name: ExamProgram; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public."ExamProgram" (
-    "Id" uuid NOT NULL,
+    "CX" bigint NOT NULL,
     "Name" character varying(500) NOT NULL,
-    "SemesterId" uuid NOT NULL,
-    "CX" bigint NOT NULL
+    "Type" boolean NOT NULL,
+    "Image" bytea
 );
 
 
-ALTER TABLE public."ExamProgram" OWNER TO postgres;
+ALTER TABLE public."Category" OWNER TO postgres;
 
 --
--- Name: ExamProgram_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: Category_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public."ExamProgram_CX_seq"
+CREATE SEQUENCE public."Category_CX_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -84,48 +61,37 @@ CREATE SEQUENCE public."ExamProgram_CX_seq"
     CACHE 1;
 
 
-ALTER TABLE public."ExamProgram_CX_seq" OWNER TO postgres;
+ALTER TABLE public."Category_CX_seq" OWNER TO postgres;
 
 --
--- Name: ExamProgram_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: Category_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."ExamProgram_CX_seq" OWNED BY public."ExamProgram"."CX";
+ALTER SEQUENCE public."Category_CX_seq" OWNED BY public."Category"."CX";
 
 
 --
--- Name: ExamRoom; Type: TABLE; Schema: public; Owner: postgres
+-- Name: Transaction; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."ExamRoom" (
+CREATE TABLE public."Transaction" (
     "Id" uuid NOT NULL,
-    "RoomNumber" smallint NOT NULL,
-    "AmphitheaterName" character varying(50) NOT NULL,
-    "ComputerNumber" integer NOT NULL,
-    "CX" bigint NOT NULL
+    "CX" bigint NOT NULL,
+    "WalletId" uuid NOT NULL,
+    "CategoryId" uuid NOT NULL,
+    "Amount" numeric NOT NULL,
+    "Note" character varying(500),
+    "Date" timestamp without time zone NOT NULL
 );
 
 
-ALTER TABLE public."ExamRoom" OWNER TO postgres;
+ALTER TABLE public."Transaction" OWNER TO postgres;
 
 --
--- Name: ExamRoomExamPeriod; Type: TABLE; Schema: public; Owner: postgres
+-- Name: Transaction_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."ExamRoomExamPeriod" (
-    "ExamRoomId" uuid NOT NULL,
-    "ExamPeriodId" uuid NOT NULL,
-    "CX" bigint NOT NULL
-);
-
-
-ALTER TABLE public."ExamRoomExamPeriod" OWNER TO postgres;
-
---
--- Name: ExamRoomExamPeriod_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public."ExamRoomExamPeriod_CX_seq"
+CREATE SEQUENCE public."Transaction_CX_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -133,56 +99,34 @@ CREATE SEQUENCE public."ExamRoomExamPeriod_CX_seq"
     CACHE 1;
 
 
-ALTER TABLE public."ExamRoomExamPeriod_CX_seq" OWNER TO postgres;
+ALTER TABLE public."Transaction_CX_seq" OWNER TO postgres;
 
 --
--- Name: ExamRoomExamPeriod_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: Transaction_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."ExamRoomExamPeriod_CX_seq" OWNED BY public."ExamRoomExamPeriod"."CX";
-
-
---
--- Name: ExamRoom_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public."ExamRoom_CX_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public."ExamRoom_CX_seq" OWNER TO postgres;
-
---
--- Name: ExamRoom_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public."ExamRoom_CX_seq" OWNED BY public."ExamRoom"."CX";
+ALTER SEQUENCE public."Transaction_CX_seq" OWNED BY public."Transaction"."CX";
 
 
 --
--- Name: Semester; Type: TABLE; Schema: public; Owner: postgres
+-- Name: User; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."Semester" (
+CREATE TABLE public."User" (
     "Id" uuid NOT NULL,
-    "StartYear" smallint NOT NULL,
-    "EndYear" smallint NOT NULL,
-    "IsFirstHalf" boolean NOT NULL,
-    "CX" bigint NOT NULL
+    "CX" bigint NOT NULL,
+    "Username" character varying(500) NOT NULL,
+    "Password" character varying(500) NOT NULL
 );
 
 
-ALTER TABLE public."Semester" OWNER TO postgres;
+ALTER TABLE public."User" OWNER TO postgres;
 
 --
--- Name: Semester_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: User_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public."Semester_CX_seq"
+CREATE SEQUENCE public."User_CX_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -190,50 +134,35 @@ CREATE SEQUENCE public."Semester_CX_seq"
     CACHE 1;
 
 
-ALTER TABLE public."Semester_CX_seq" OWNER TO postgres;
+ALTER TABLE public."User_CX_seq" OWNER TO postgres;
 
 --
--- Name: Semester_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: User_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."Semester_CX_seq" OWNED BY public."Semester"."CX";
+ALTER SEQUENCE public."User_CX_seq" OWNED BY public."User"."CX";
 
 
 --
--- Name: Student; Type: TABLE; Schema: public; Owner: postgres
+-- Name: Wallet; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."Student" (
+CREATE TABLE public."Wallet" (
     "Id" uuid NOT NULL,
-    "StudentNumber" integer NOT NULL,
-    "LastName" character varying(100) NOT NULL,
-    "GivenName" character varying(100) NOT NULL,
-    "Birthday" date NOT NULL,
-    "Email" character varying(500) NOT NULL,
-    "CX" bigint NOT NULL
+    "CX" bigint NOT NULL,
+    "Name" character varying(500) NOT NULL,
+    "Balance" numeric NOT NULL,
+    "UserId" uuid NOT NULL
 );
 
 
-ALTER TABLE public."Student" OWNER TO postgres;
+ALTER TABLE public."Wallet" OWNER TO postgres;
 
 --
--- Name: StudentExamPeriod; Type: TABLE; Schema: public; Owner: postgres
+-- Name: Wallet_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."StudentExamPeriod" (
-    "StudentId" uuid NOT NULL,
-    "ExamPeriodId" uuid NOT NULL,
-    "CX" bigint NOT NULL
-);
-
-
-ALTER TABLE public."StudentExamPeriod" OWNER TO postgres;
-
---
--- Name: StudentExamPeriod_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public."StudentExamPeriod_CX_seq"
+CREATE SEQUENCE public."Wallet_CX_seq"
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -241,524 +170,220 @@ CREATE SEQUENCE public."StudentExamPeriod_CX_seq"
     CACHE 1;
 
 
-ALTER TABLE public."StudentExamPeriod_CX_seq" OWNER TO postgres;
+ALTER TABLE public."Wallet_CX_seq" OWNER TO postgres;
 
 --
--- Name: StudentExamPeriod_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: Wallet_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public."StudentExamPeriod_CX_seq" OWNED BY public."StudentExamPeriod"."CX";
-
-
---
--- Name: StudentExamRoom; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public."StudentExamRoom" (
-    "StudentId" uuid NOT NULL,
-    "ExamRoomId" uuid NOT NULL,
-    "CX" bigint NOT NULL
-);
-
-
-ALTER TABLE public."StudentExamRoom" OWNER TO postgres;
-
---
--- Name: StudentExamRoom_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public."StudentExamRoom_CX_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public."StudentExamRoom_CX_seq" OWNER TO postgres;
-
---
--- Name: StudentExamRoom_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public."StudentExamRoom_CX_seq" OWNED BY public."StudentExamRoom"."CX";
+ALTER SEQUENCE public."Wallet_CX_seq" OWNED BY public."Wallet"."CX";
 
 
 --
--- Name: StudentTerm; Type: TABLE; Schema: public; Owner: postgres
+-- Name: Category CX; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."StudentTerm" (
-    "StudentId" uuid NOT NULL,
-    "TermId" uuid NOT NULL,
-    "CX" bigint NOT NULL
-);
-
-
-ALTER TABLE public."StudentTerm" OWNER TO postgres;
-
---
--- Name: StudentTerm_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public."StudentTerm_CX_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public."StudentTerm_CX_seq" OWNER TO postgres;
-
---
--- Name: StudentTerm_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public."StudentTerm_CX_seq" OWNED BY public."StudentTerm"."CX";
+ALTER TABLE ONLY public."Category" ALTER COLUMN "CX" SET DEFAULT nextval('public."Category_CX_seq"'::regclass);
 
 
 --
--- Name: Student_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: Transaction CX; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public."Student_CX_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public."Student_CX_seq" OWNER TO postgres;
-
---
--- Name: Student_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public."Student_CX_seq" OWNED BY public."Student"."CX";
+ALTER TABLE ONLY public."Transaction" ALTER COLUMN "CX" SET DEFAULT nextval('public."Transaction_CX_seq"'::regclass);
 
 
 --
--- Name: Term; Type: TABLE; Schema: public; Owner: postgres
+-- Name: User CX; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public."Term" (
-    "Id" uuid NOT NULL,
-    "SubjectName" character varying(500) NOT NULL,
-    "SemesterId" uuid NOT NULL,
-    "CX" bigint NOT NULL
-);
-
-
-ALTER TABLE public."Term" OWNER TO postgres;
-
---
--- Name: Term_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public."Term_CX_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public."Term_CX_seq" OWNER TO postgres;
-
---
--- Name: Term_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public."Term_CX_seq" OWNED BY public."Term"."CX";
+ALTER TABLE ONLY public."User" ALTER COLUMN "CX" SET DEFAULT nextval('public."User_CX_seq"'::regclass);
 
 
 --
--- Name: ExamPeriod CX; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: Wallet CX; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."ExamPeriod" ALTER COLUMN "CX" SET DEFAULT nextval('public."ExamPeriod_CX_seq"'::regclass);
-
-
---
--- Name: ExamProgram CX; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."ExamProgram" ALTER COLUMN "CX" SET DEFAULT nextval('public."ExamProgram_CX_seq"'::regclass);
+ALTER TABLE ONLY public."Wallet" ALTER COLUMN "CX" SET DEFAULT nextval('public."Wallet_CX_seq"'::regclass);
 
 
 --
--- Name: ExamRoom CX; Type: DEFAULT; Schema: public; Owner: postgres
+-- Data for Name: Category; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public."ExamRoom" ALTER COLUMN "CX" SET DEFAULT nextval('public."ExamRoom_CX_seq"'::regclass);
-
-
---
--- Name: ExamRoomExamPeriod CX; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."ExamRoomExamPeriod" ALTER COLUMN "CX" SET DEFAULT nextval('public."ExamRoomExamPeriod_CX_seq"'::regclass);
-
-
---
--- Name: Semester CX; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Semester" ALTER COLUMN "CX" SET DEFAULT nextval('public."Semester_CX_seq"'::regclass);
-
-
---
--- Name: Student CX; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Student" ALTER COLUMN "CX" SET DEFAULT nextval('public."Student_CX_seq"'::regclass);
-
-
---
--- Name: StudentExamPeriod CX; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamPeriod" ALTER COLUMN "CX" SET DEFAULT nextval('public."StudentExamPeriod_CX_seq"'::regclass);
-
-
---
--- Name: StudentExamRoom CX; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamRoom" ALTER COLUMN "CX" SET DEFAULT nextval('public."StudentExamRoom_CX_seq"'::regclass);
-
-
---
--- Name: StudentTerm CX; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentTerm" ALTER COLUMN "CX" SET DEFAULT nextval('public."StudentTerm_CX_seq"'::regclass);
-
-
---
--- Name: Term CX; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Term" ALTER COLUMN "CX" SET DEFAULT nextval('public."Term_CX_seq"'::regclass);
-
-
---
--- Data for Name: ExamPeriod; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."ExamPeriod" ("Id", "ExamDate", "StartHour", "FinishHour", "TermId", "ExamProgramId", "CX") FROM stdin;
+COPY public."Category" ("Id", "CX", "Name", "Type", "Image") FROM stdin;
+c2efbdb0-8b15-922c-4183-203cb33a5a26	1	Wallet Transfer	f	\N
+f9946c00-105b-f2ff-f008-1e69392f0f82	2	Wallet Transfer	t	\N
+7f9bd030-bc2a-dd3d-7f9c-651fe074f813	3	Category0	t	\N
+e1541184-e899-a409-b05b-edc679ef99b8	4	Category1	f	\N
+20ca9787-8a2e-60bc-902e-e31e298b4561	5	Category2	t	\N
+ca889dd9-6ead-bbdd-629b-b7143cb03db6	6	Category3	f	\N
+befd2ff7-02e1-cd76-ea27-cd6a84f2ae2e	7	Category4	t	\N
+1ea2d02f-d81c-119c-4ad4-2e37fa7b8ca2	8	Category5	f	\N
+ec1acf6c-3835-c844-b9b7-fa44c0604e88	9	Category6	t	\N
+3aa52dd1-f6c2-4abc-1bfc-48a4c291619d	10	Category7	f	\N
+c40c0194-7e58-6e6a-9b20-0bba69afbda6	11	Category8	t	\N
+0a5c5f29-de74-cfbc-3414-7d6f533801cd	12	Category9	f	\N
 \.
 
 
 --
--- Data for Name: ExamProgram; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: Transaction; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."ExamProgram" ("Id", "Name", "SemesterId", "CX") FROM stdin;
+COPY public."Transaction" ("Id", "CX", "WalletId", "CategoryId", "Amount", "Note", "Date") FROM stdin;
+fc19eec9-357b-e030-52fa-5e3b02fc38e5	2	cad38b42-0366-b6dd-4e29-7acaa33d5efe	c40c0194-7e58-6e6a-9b20-0bba69afbda6	20000	Category8.User0.Wallet0.Transaction1	2000-02-02 00:00:00
+8073d176-108f-bdc7-a88f-846fef18dca8	3	cad38b42-0366-b6dd-4e29-7acaa33d5efe	c40c0194-7e58-6e6a-9b20-0bba69afbda6	10000	Category8.User0.Wallet0.Transaction0	2000-01-01 00:00:00
+aecca4ef-7c73-da88-1428-17d0853a459a	4	cad38b42-0366-b6dd-4e29-7acaa33d5efe	3aa52dd1-f6c2-4abc-1bfc-48a4c291619d	20000	Category7.User0.Wallet0.Transaction1	2000-02-02 00:00:00
+65cc104d-05eb-96e9-4de6-9e65c4dcd0bb	5	cad38b42-0366-b6dd-4e29-7acaa33d5efe	3aa52dd1-f6c2-4abc-1bfc-48a4c291619d	10000	Category7.User0.Wallet0.Transaction0	2000-01-01 00:00:00
+838e4b8a-d6f9-f8c7-96de-02568b4d25f5	6	cad38b42-0366-b6dd-4e29-7acaa33d5efe	ec1acf6c-3835-c844-b9b7-fa44c0604e88	20000	Category6.User0.Wallet0.Transaction1	2000-02-02 00:00:00
+108245f5-2d2b-1022-3512-b9342fd81dcc	7	cad38b42-0366-b6dd-4e29-7acaa33d5efe	ec1acf6c-3835-c844-b9b7-fa44c0604e88	10000	Category6.User0.Wallet0.Transaction0	2000-01-01 00:00:00
+6f60d4e4-3340-ea33-0421-374d1b4e6d72	8	cad38b42-0366-b6dd-4e29-7acaa33d5efe	1ea2d02f-d81c-119c-4ad4-2e37fa7b8ca2	20000	Category5.User0.Wallet0.Transaction1	2000-02-02 00:00:00
+2e02c138-2e92-b78c-fe56-501d8140c46a	9	cad38b42-0366-b6dd-4e29-7acaa33d5efe	1ea2d02f-d81c-119c-4ad4-2e37fa7b8ca2	10000	Category5.User0.Wallet0.Transaction0	2000-01-01 00:00:00
+f706fc04-432b-5721-e54c-55ba68918584	10	cad38b42-0366-b6dd-4e29-7acaa33d5efe	befd2ff7-02e1-cd76-ea27-cd6a84f2ae2e	20000	Category4.User0.Wallet0.Transaction1	2000-02-02 00:00:00
+9f4deb2e-783d-6430-f445-ee8fb99ca654	11	cad38b42-0366-b6dd-4e29-7acaa33d5efe	befd2ff7-02e1-cd76-ea27-cd6a84f2ae2e	10000	Category4.User0.Wallet0.Transaction0	2000-01-01 00:00:00
+b980b426-861f-ab17-b3b9-bb6238e592d1	12	cad38b42-0366-b6dd-4e29-7acaa33d5efe	ca889dd9-6ead-bbdd-629b-b7143cb03db6	20000	Category3.User0.Wallet0.Transaction1	2000-02-02 00:00:00
+0f6bfea8-b6c1-76dd-d0af-ffc4009f4b42	13	cad38b42-0366-b6dd-4e29-7acaa33d5efe	ca889dd9-6ead-bbdd-629b-b7143cb03db6	10000	Category3.User0.Wallet0.Transaction0	2000-01-01 00:00:00
+9b322c3b-cff6-7d07-afce-78ba2d4ef7d1	14	cad38b42-0366-b6dd-4e29-7acaa33d5efe	20ca9787-8a2e-60bc-902e-e31e298b4561	20000	Category2.User0.Wallet0.Transaction1	2000-02-02 00:00:00
+b7eaf88c-2a1d-1e3e-77a2-61d6fc25bbd3	15	cad38b42-0366-b6dd-4e29-7acaa33d5efe	20ca9787-8a2e-60bc-902e-e31e298b4561	10000	Category2.User0.Wallet0.Transaction0	2000-01-01 00:00:00
+0cd1b398-a4a2-fe0b-0b9b-c2887c88b337	16	cad38b42-0366-b6dd-4e29-7acaa33d5efe	e1541184-e899-a409-b05b-edc679ef99b8	20000	Category1.User0.Wallet0.Transaction1	2000-02-02 00:00:00
+a7218420-b0a2-090d-1f53-dd93759d68d4	17	cad38b42-0366-b6dd-4e29-7acaa33d5efe	e1541184-e899-a409-b05b-edc679ef99b8	10000	Category1.User0.Wallet0.Transaction0	2000-01-01 00:00:00
+3afcf0d4-975f-216c-4be7-fd686fb904ed	18	cad38b42-0366-b6dd-4e29-7acaa33d5efe	7f9bd030-bc2a-dd3d-7f9c-651fe074f813	20000	Category0.User0.Wallet0.Transaction1	2000-02-02 00:00:00
+fea2b1de-dee1-7d79-146e-fc6a8ce559c9	19	cad38b42-0366-b6dd-4e29-7acaa33d5efe	7f9bd030-bc2a-dd3d-7f9c-651fe074f813	10000	Category0.User0.Wallet0.Transaction0	2000-01-01 00:00:00
+47b4e35f-cf6a-3404-d886-19da4c772ff4	23	cad38b42-0366-b6dd-4e29-7acaa33d5efe	0a5c5f29-de74-cfbc-3414-7d6f533801cd	10000	Category9.User0.Wallet0.Transaction0	2000-01-01 00:00:00
+9bfbfeda-713d-67a5-5a89-5c43fa7be509	24	cad38b42-0366-b6dd-4e29-7acaa33d5efe	0a5c5f29-de74-cfbc-3414-7d6f533801cd	20000	Category9.User0.Wallet0.Transaction1	2000-02-02 00:00:00
 \.
 
 
 --
--- Data for Name: ExamRoom; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."ExamRoom" ("Id", "RoomNumber", "AmphitheaterName", "ComputerNumber", "CX") FROM stdin;
+COPY public."User" ("Id", "CX", "Username", "Password") FROM stdin;
+c81a46fc-e3b6-9af1-9f64-800389e202fe	1	User0	User0
 \.
 
 
 --
--- Data for Name: ExamRoomExamPeriod; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: Wallet; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."ExamRoomExamPeriod" ("ExamRoomId", "ExamPeriodId", "CX") FROM stdin;
+COPY public."Wallet" ("Id", "CX", "Name", "Balance", "UserId") FROM stdin;
+be781018-a93a-4da7-b9a1-62a71895a7ae	4	Anh Phan	9222	c81a46fc-e3b6-9af1-9f64-800389e202fe
+cad38b42-0366-b6dd-4e29-7acaa33d5efe	1	User0.Wallet0	1170	c81a46fc-e3b6-9af1-9f64-800389e202fe
 \.
 
 
 --
--- Data for Name: Semester; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Name: Category_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-COPY public."Semester" ("Id", "StartYear", "EndYear", "IsFirstHalf", "CX") FROM stdin;
-\.
+SELECT pg_catalog.setval('public."Category_CX_seq"', 12, true);
 
 
 --
--- Data for Name: Student; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Name: Transaction_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-COPY public."Student" ("Id", "StudentNumber", "LastName", "GivenName", "Birthday", "Email", "CX") FROM stdin;
-\.
+SELECT pg_catalog.setval('public."Transaction_CX_seq"', 32, true);
 
 
 --
--- Data for Name: StudentExamPeriod; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Name: User_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-COPY public."StudentExamPeriod" ("StudentId", "ExamPeriodId", "CX") FROM stdin;
-\.
+SELECT pg_catalog.setval('public."User_CX_seq"', 1, true);
 
 
 --
--- Data for Name: StudentExamRoom; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Name: Wallet_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-COPY public."StudentExamRoom" ("StudentId", "ExamRoomId", "CX") FROM stdin;
-\.
+SELECT pg_catalog.setval('public."Wallet_CX_seq"', 4, true);
 
 
 --
--- Data for Name: StudentTerm; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Name: Category category_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-COPY public."StudentTerm" ("StudentId", "TermId", "CX") FROM stdin;
-\.
+ALTER TABLE ONLY public."Category"
+    ADD CONSTRAINT category_pk PRIMARY KEY ("Id");
 
 
 --
--- Data for Name: Term; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Name: Transaction transaction_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-COPY public."Term" ("Id", "SubjectName", "SemesterId", "CX") FROM stdin;
-\.
+ALTER TABLE ONLY public."Transaction"
+    ADD CONSTRAINT transaction_pk PRIMARY KEY ("Id");
 
 
 --
--- Name: ExamPeriod_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: User user_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."ExamPeriod_CX_seq"', 1, false);
+ALTER TABLE ONLY public."User"
+    ADD CONSTRAINT user_pk PRIMARY KEY ("Id");
 
 
 --
--- Name: ExamProgram_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: Wallet wallet_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."ExamProgram_CX_seq"', 1, false);
+ALTER TABLE ONLY public."Wallet"
+    ADD CONSTRAINT wallet_pk PRIMARY KEY ("Id");
 
 
 --
--- Name: ExamRoomExamPeriod_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: category_cx_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."ExamRoomExamPeriod_CX_seq"', 1, false);
+CREATE UNIQUE INDEX category_cx_idx ON public."Category" USING btree ("CX");
 
 
 --
--- Name: ExamRoom_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: transaction_cx_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."ExamRoom_CX_seq"', 1, false);
+CREATE UNIQUE INDEX transaction_cx_idx ON public."Transaction" USING btree ("CX");
 
 
 --
--- Name: Semester_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: user_cx_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Semester_CX_seq"', 1, false);
+CREATE UNIQUE INDEX user_cx_idx ON public."User" USING btree ("CX");
 
 
 --
--- Name: StudentExamPeriod_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: wallet_cx_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."StudentExamPeriod_CX_seq"', 1, false);
+CREATE UNIQUE INDEX wallet_cx_idx ON public."Wallet" USING btree ("CX");
 
 
 --
--- Name: StudentExamRoom_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: Transaction transaction_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."StudentExamRoom_CX_seq"', 1, false);
+ALTER TABLE ONLY public."Transaction"
+    ADD CONSTRAINT transaction_fk FOREIGN KEY ("CategoryId") REFERENCES public."Category"("Id") ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
--- Name: StudentTerm_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: Transaction transaction_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."StudentTerm_CX_seq"', 1, false);
+ALTER TABLE ONLY public."Transaction"
+    ADD CONSTRAINT transaction_fk_1 FOREIGN KEY ("WalletId") REFERENCES public."Wallet"("Id") ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
--- Name: Student_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: Wallet wallet_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public."Student_CX_seq"', 1, false);
-
-
---
--- Name: Term_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public."Term_CX_seq"', 1, false);
-
-
---
--- Name: ExamPeriod examperiod_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."ExamPeriod"
-    ADD CONSTRAINT examperiod_pk PRIMARY KEY ("Id");
-
-
---
--- Name: ExamPeriod examperiod_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."ExamPeriod"
-    ADD CONSTRAINT examperiod_un UNIQUE ("CX");
-
-
---
--- Name: ExamProgram examprogram_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."ExamProgram"
-    ADD CONSTRAINT examprogram_pk PRIMARY KEY ("Id");
-
-
---
--- Name: ExamProgram examprogram_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."ExamProgram"
-    ADD CONSTRAINT examprogram_un UNIQUE ("CX");
-
-
---
--- Name: ExamRoom examroom_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."ExamRoom"
-    ADD CONSTRAINT examroom_pk PRIMARY KEY ("Id");
-
-
---
--- Name: ExamRoom examroom_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."ExamRoom"
-    ADD CONSTRAINT examroom_un UNIQUE ("CX");
-
-
---
--- Name: ExamRoomExamPeriod examroomexamperiod_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."ExamRoomExamPeriod"
-    ADD CONSTRAINT examroomexamperiod_pk PRIMARY KEY ("ExamRoomId", "ExamPeriodId");
-
-
---
--- Name: ExamRoomExamPeriod examroomexamperiod_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."ExamRoomExamPeriod"
-    ADD CONSTRAINT examroomexamperiod_un UNIQUE ("CX");
-
-
---
--- Name: Semester semester_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Semester"
-    ADD CONSTRAINT semester_pk PRIMARY KEY ("Id");
-
-
---
--- Name: Semester semester_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Semester"
-    ADD CONSTRAINT semester_un UNIQUE ("CX");
-
-
---
--- Name: Student student_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Student"
-    ADD CONSTRAINT student_pk PRIMARY KEY ("Id");
-
-
---
--- Name: Student student_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Student"
-    ADD CONSTRAINT student_un UNIQUE ("StudentNumber", "CX");
-
-
---
--- Name: StudentExamPeriod studentexamperiod_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamPeriod"
-    ADD CONSTRAINT studentexamperiod_pk PRIMARY KEY ("StudentId", "ExamPeriodId");
-
-
---
--- Name: StudentExamPeriod studentexamperiod_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamPeriod"
-    ADD CONSTRAINT studentexamperiod_un UNIQUE ("CX");
-
-
---
--- Name: StudentExamRoom studentexamroom_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamRoom"
-    ADD CONSTRAINT studentexamroom_pk PRIMARY KEY ("ExamRoomId", "StudentId");
-
-
---
--- Name: StudentExamRoom studentexamroom_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamRoom"
-    ADD CONSTRAINT studentexamroom_un UNIQUE ("CX");
-
-
---
--- Name: StudentTerm studentterm_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentTerm"
-    ADD CONSTRAINT studentterm_pk PRIMARY KEY ("StudentId", "TermId");
-
-
---
--- Name: StudentTerm studentterm_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentTerm"
-    ADD CONSTRAINT studentterm_un UNIQUE ("CX");
-
-
---
--- Name: Term term_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Term"
-    ADD CONSTRAINT term_pk PRIMARY KEY ("Id");
-
-
---
--- Name: Term term_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Term"
-    ADD CONSTRAINT term_un UNIQUE ("CX");
-
-
---
--- Name: term_cx_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX term_cx_idx ON public."Term" USING btree ("CX");
+ALTER TABLE ONLY public."Wallet"
+    ADD CONSTRAINT wallet_fk FOREIGN KEY ("UserId") REFERENCES public."User"("Id") ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
