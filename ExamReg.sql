@@ -251,40 +251,6 @@ ALTER SEQUENCE public."StudentExamPeriod_CX_seq" OWNED BY public."StudentExamPer
 
 
 --
--- Name: StudentExamRoom; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public."StudentExamRoom" (
-    "StudentId" uuid NOT NULL,
-    "ExamRoomId" uuid NOT NULL,
-    "CX" bigint NOT NULL
-);
-
-
-ALTER TABLE public."StudentExamRoom" OWNER TO postgres;
-
---
--- Name: StudentExamRoom_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public."StudentExamRoom_CX_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public."StudentExamRoom_CX_seq" OWNER TO postgres;
-
---
--- Name: StudentExamRoom_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public."StudentExamRoom_CX_seq" OWNED BY public."StudentExamRoom"."CX";
-
-
---
 -- Name: StudentTerm; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -462,13 +428,6 @@ ALTER TABLE ONLY public."StudentExamPeriod" ALTER COLUMN "CX" SET DEFAULT nextva
 
 
 --
--- Name: StudentExamRoom CX; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamRoom" ALTER COLUMN "CX" SET DEFAULT nextval('public."StudentExamRoom_CX_seq"'::regclass);
-
-
---
 -- Name: StudentTerm CX; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -546,14 +505,6 @@ COPY public."StudentExamPeriod" ("StudentId", "ExamPeriodId", "CX") FROM stdin;
 
 
 --
--- Data for Name: StudentExamRoom; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."StudentExamRoom" ("StudentId", "ExamRoomId", "CX") FROM stdin;
-\.
-
-
---
 -- Data for Name: StudentTerm; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -617,13 +568,6 @@ SELECT pg_catalog.setval('public."Semester_CX_seq"', 1, false);
 --
 
 SELECT pg_catalog.setval('public."StudentExamPeriod_CX_seq"', 1, false);
-
-
---
--- Name: StudentExamRoom_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public."StudentExamRoom_CX_seq"', 1, false);
 
 
 --
@@ -767,22 +711,6 @@ ALTER TABLE ONLY public."StudentExamPeriod"
 
 
 --
--- Name: StudentExamRoom studentexamroom_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamRoom"
-    ADD CONSTRAINT studentexamroom_pk PRIMARY KEY ("ExamRoomId", "StudentId");
-
-
---
--- Name: StudentExamRoom studentexamroom_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamRoom"
-    ADD CONSTRAINT studentexamroom_un UNIQUE ("CX");
-
-
---
 -- Name: StudentTerm studentterm_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -862,14 +790,6 @@ ALTER TABLE ONLY public."ExamProgram"
 
 
 --
--- Name: StudentExamRoom examroom_studentexamroom_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamRoom"
-    ADD CONSTRAINT examroom_studentexamroom_fk FOREIGN KEY ("ExamRoomId") REFERENCES public."ExamRoom"("Id") ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
 -- Name: ExamRoomExamPeriod examroomexamperiod_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -883,14 +803,6 @@ ALTER TABLE ONLY public."ExamRoomExamPeriod"
 
 ALTER TABLE ONLY public."ExamRoomExamPeriod"
     ADD CONSTRAINT examroomexamperiod_fk_1 FOREIGN KEY ("ExamPeriodId") REFERENCES public."ExamPeriod"("Id") ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: StudentExamRoom student_studentexamroom_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamRoom"
-    ADD CONSTRAINT student_studentexamroom_fk FOREIGN KEY ("StudentId") REFERENCES public."Student"("Id") ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
