@@ -210,45 +210,13 @@ CREATE TABLE public."Student" (
     "GivenName" character varying(100) NOT NULL,
     "Birthday" date NOT NULL,
     "Email" character varying(500) NOT NULL,
-    "CX" bigint NOT NULL
+    "CX" bigint NOT NULL,
+    "ExamPeriodId" uuid,
+    "ExamRoomId" uuid
 );
 
 
 ALTER TABLE public."Student" OWNER TO postgres;
-
---
--- Name: StudentExamPeriod; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public."StudentExamPeriod" (
-    "StudentId" uuid NOT NULL,
-    "ExamPeriodId" uuid NOT NULL,
-    "CX" bigint NOT NULL
-);
-
-
-ALTER TABLE public."StudentExamPeriod" OWNER TO postgres;
-
---
--- Name: StudentExamPeriod_CX_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE public."StudentExamPeriod_CX_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public."StudentExamPeriod_CX_seq" OWNER TO postgres;
-
---
--- Name: StudentExamPeriod_CX_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE public."StudentExamPeriod_CX_seq" OWNED BY public."StudentExamPeriod"."CX";
-
 
 --
 -- Name: StudentTerm; Type: TABLE; Schema: public; Owner: postgres
@@ -421,13 +389,6 @@ ALTER TABLE ONLY public."Student" ALTER COLUMN "CX" SET DEFAULT nextval('public.
 
 
 --
--- Name: StudentExamPeriod CX; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamPeriod" ALTER COLUMN "CX" SET DEFAULT nextval('public."StudentExamPeriod_CX_seq"'::regclass);
-
-
---
 -- Name: StudentTerm CX; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -492,15 +453,7 @@ COPY public."Semester" ("Id", "StartYear", "EndYear", "IsFirstHalf", "CX") FROM 
 -- Data for Name: Student; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Student" ("Id", "StudentNumber", "LastName", "GivenName", "Birthday", "Email", "CX") FROM stdin;
-\.
-
-
---
--- Data for Name: StudentExamPeriod; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public."StudentExamPeriod" ("StudentId", "ExamPeriodId", "CX") FROM stdin;
+COPY public."Student" ("Id", "StudentNumber", "LastName", "GivenName", "Birthday", "Email", "CX", "ExamPeriodId", "ExamRoomId") FROM stdin;
 \.
 
 
@@ -561,13 +514,6 @@ SELECT pg_catalog.setval('public."ExamRoom_CX_seq"', 1, false);
 --
 
 SELECT pg_catalog.setval('public."Semester_CX_seq"', 1, false);
-
-
---
--- Name: StudentExamPeriod_CX_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('public."StudentExamPeriod_CX_seq"', 1, false);
 
 
 --
@@ -695,22 +641,6 @@ ALTER TABLE ONLY public."Student"
 
 
 --
--- Name: StudentExamPeriod studentexamperiod_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamPeriod"
-    ADD CONSTRAINT studentexamperiod_pk PRIMARY KEY ("StudentId", "ExamPeriodId");
-
-
---
--- Name: StudentExamPeriod studentexamperiod_un; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamPeriod"
-    ADD CONSTRAINT studentexamperiod_un UNIQUE ("CX");
-
-
---
 -- Name: StudentTerm studentterm_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -806,27 +736,19 @@ ALTER TABLE ONLY public."ExamRoomExamPeriod"
 
 
 --
+-- Name: Student student_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Student"
+    ADD CONSTRAINT student_fk FOREIGN KEY ("ExamRoomId", "ExamPeriodId") REFERENCES public."ExamRoomExamPeriod"("ExamRoomId", "ExamPeriodId") ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
 -- Name: StudentTerm student_studentterm_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."StudentTerm"
     ADD CONSTRAINT student_studentterm_fk FOREIGN KEY ("StudentId") REFERENCES public."Student"("Id") ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: StudentExamPeriod studentexamperiod_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamPeriod"
-    ADD CONSTRAINT studentexamperiod_fk FOREIGN KEY ("StudentId") REFERENCES public."Student"("Id") ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: StudentExamPeriod studentexamperiod_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."StudentExamPeriod"
-    ADD CONSTRAINT studentexamperiod_fk_1 FOREIGN KEY ("ExamPeriodId") REFERENCES public."ExamPeriod"("Id") ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
