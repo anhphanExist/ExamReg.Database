@@ -94,6 +94,19 @@ ALTER SEQUENCE public."ExamProgram_CX_seq" OWNED BY public."ExamProgram"."CX";
 
 
 --
+-- Name: ExamRegister; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."ExamRegister" (
+    "StudentId" uuid NOT NULL,
+    "ExamRoomId" uuid NOT NULL,
+    "ExamPeriodId" uuid NOT NULL
+);
+
+
+ALTER TABLE public."ExamRegister" OWNER TO postgres;
+
+--
 -- Name: ExamRoom; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -210,9 +223,7 @@ CREATE TABLE public."Student" (
     "GivenName" character varying(100) NOT NULL,
     "Birthday" date NOT NULL,
     "Email" character varying(500) NOT NULL,
-    "CX" bigint NOT NULL,
-    "ExamPeriodId" uuid,
-    "ExamRoomId" uuid
+    "CX" bigint NOT NULL
 );
 
 
@@ -426,6 +437,14 @@ COPY public."ExamProgram" ("Id", "Name", "SemesterId", "CX") FROM stdin;
 
 
 --
+-- Data for Name: ExamRegister; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public."ExamRegister" ("StudentId", "ExamRoomId", "ExamPeriodId") FROM stdin;
+\.
+
+
+--
 -- Data for Name: ExamRoom; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -453,7 +472,7 @@ COPY public."Semester" ("Id", "StartYear", "EndYear", "IsFirstHalf", "CX") FROM 
 -- Data for Name: Student; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."Student" ("Id", "StudentNumber", "LastName", "GivenName", "Birthday", "Email", "CX", "ExamPeriodId", "ExamRoomId") FROM stdin;
+COPY public."Student" ("Id", "StudentNumber", "LastName", "GivenName", "Birthday", "Email", "CX") FROM stdin;
 \.
 
 
@@ -574,6 +593,14 @@ ALTER TABLE ONLY public."ExamProgram"
 
 ALTER TABLE ONLY public."ExamProgram"
     ADD CONSTRAINT examprogram_un UNIQUE ("CX");
+
+
+--
+-- Name: ExamRegister examregister_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."ExamRegister"
+    ADD CONSTRAINT examregister_pk PRIMARY KEY ("StudentId", "ExamRoomId", "ExamPeriodId");
 
 
 --
@@ -720,6 +747,22 @@ ALTER TABLE ONLY public."ExamProgram"
 
 
 --
+-- Name: ExamRegister examregister_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."ExamRegister"
+    ADD CONSTRAINT examregister_fk FOREIGN KEY ("ExamRoomId", "ExamPeriodId") REFERENCES public."ExamRoomExamPeriod"("ExamRoomId", "ExamPeriodId") ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- Name: ExamRegister examregister_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."ExamRegister"
+    ADD CONSTRAINT examregister_fk_1 FOREIGN KEY ("StudentId") REFERENCES public."Student"("Id") ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
 -- Name: ExamRoomExamPeriod examroomexamperiod_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -733,14 +776,6 @@ ALTER TABLE ONLY public."ExamRoomExamPeriod"
 
 ALTER TABLE ONLY public."ExamRoomExamPeriod"
     ADD CONSTRAINT examroomexamperiod_fk_1 FOREIGN KEY ("ExamPeriodId") REFERENCES public."ExamPeriod"("Id") ON UPDATE RESTRICT ON DELETE RESTRICT;
-
-
---
--- Name: Student student_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."Student"
-    ADD CONSTRAINT student_fk FOREIGN KEY ("ExamRoomId", "ExamPeriodId") REFERENCES public."ExamRoomExamPeriod"("ExamRoomId", "ExamPeriodId") ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 --
