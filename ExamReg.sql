@@ -66,7 +66,8 @@ CREATE TABLE public."ExamProgram" (
     "Id" uuid NOT NULL,
     "Name" character varying(500) NOT NULL,
     "SemesterId" uuid NOT NULL,
-    "CX" bigint NOT NULL
+    "CX" bigint NOT NULL,
+    "IsCurrent" boolean NOT NULL
 );
 
 
@@ -432,7 +433,7 @@ COPY public."ExamPeriod" ("Id", "ExamDate", "StartHour", "FinishHour", "TermId",
 -- Data for Name: ExamProgram; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public."ExamProgram" ("Id", "Name", "SemesterId", "CX") FROM stdin;
+COPY public."ExamProgram" ("Id", "Name", "SemesterId", "CX", "IsCurrent") FROM stdin;
 \.
 
 
